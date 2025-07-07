@@ -1,14 +1,39 @@
-# Welcome to your CDK TypeScript project
+## 事前準備
+- ComfyUIバックアップ用S3バケット作成  
+`comfyui-backup-{アカウントID}`
+- CIVITAIのAPIキーのSSMパラメータ作成  
+`/comfy-ui/civitai-api-key`
 
-This is a blank project for CDK development with TypeScript.
+## 初回
+```bash
+$ cdk bootstrap
+```
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## 通常フロー
+```bash
+$ cdk deploy
+$ ssh -i ~/.ssh/comfy-ui.pem ubuntu@{パブリックIP}
+```
+以下インスタンス内
+```bash
+$ ./setup.sh
+$ cd ComfyUI
+$ python main.py --listen
+```
+`http:{パブリックIP}:8188`にアクセス
 
-## Useful commands
+## modelダウンロード
+```bash
+# 例）
+$ wget -c {ダウンロードURL} -P ./models/checkpoints/
+```
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+## バックアップ
+```bash
+$ ./backup.sh
+```
+
+## 削除
+```bash
+$ cdk destroy
+```
