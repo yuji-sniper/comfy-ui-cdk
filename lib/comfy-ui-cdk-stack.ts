@@ -1,7 +1,7 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
-import { readFileSync } from 'fs';
+import { readdirSync, readFileSync } from 'fs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 
@@ -36,23 +36,22 @@ export class ComfyUiCdkStack extends cdk.Stack {
 
 
     // EC2 Instance
+
+    // ユーザーデータにスクリプトを追加
     const userData = ec2.UserData.forLinux();
-    const setupScript = readFileSync('./lib/setup.sh', 'utf8');
-    userData.addCommands(
-      `cat << 'EOF' > /home/ubuntu/setup.sh`,
-      `${setupScript}`,
-      `EOF`,
-      `chmod +x /home/ubuntu/setup.sh`,
-      `chown ubuntu:ubuntu /home/ubuntu/setup.sh`,
-    );
-    const backupScript = readFileSync('./lib/backup.sh', 'utf8');
-    userData.addCommands(
-      `cat << 'EOF' > /home/ubuntu/backup.sh`,
-      `${backupScript}`,
-      `EOF`,
-      `chmod +x /home/ubuntu/backup.sh`,
-    );
-    
+    const scriptDir = './lib/scripts/';
+    const scriptFiles = readdirSync(scriptDir);
+    for (const scriptFile of scriptFiles) {
+      const script = readFileSync(`${scriptDir}${scriptFile}`, 'utf8');
+      userData.addCommands(
+        `cat << 'EOF' > /home/ubuntu/${scriptFile}`,
+        `${script}`,
+        `EOF`,
+        `chmod +x /home/ubuntu/${scriptFile}`,
+        `chown ubuntu:ubuntu /home/ubuntu/${scriptFile}`,
+      );
+    }
+
     // civitiapikeyアクセスのためのロール
     const instanceRole = new iam.Role(this, 'InstanceRole', {
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),

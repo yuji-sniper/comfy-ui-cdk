@@ -28,6 +28,7 @@ pip install -r requirements.txt
 # modelをダウンロード
 
 ## checkpoint
+wget -c "https://civitai.com/api/download/models/134361?type=Model&format=SafeTensor&size=pruned&fp=fp16&token=${CIVITAI_API_KEY}" -O models/checkpoints/epiCRealism_inpainting.safetensors
 wget -c "https://civitai.com/api/download/models/176425?type=Model&format=SafeTensor&size=pruned&fp=fp16&token=${CIVITAI_API_KEY}" -O ./models/checkpoints/majicMIXrealistic.safetensors
 wget -c "https://civitai.com/api/download/models/221343?type=Model&format=SafeTensor&size=pruned&fp=fp16&token=${CIVITAI_API_KEY}" -O ./models/checkpoints/majicMIXrealistic_inpainting.safetensors
 
@@ -35,7 +36,7 @@ wget -c "https://civitai.com/api/download/models/221343?type=Model&format=SafeTe
 # wget -c https://huggingface.co/AIGaming/beautiful_realistic_asians/resolve/801a9b1999dd7018e58a1e2b432fdccd3d1d723d/beautifulRealistic_v7.safetensors -P ./models/checkpoints/
 
 ## vae
-# wget -c https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors -P ./models/vae/
+wget -c https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors -P ./models/vae/
 
 ## Flux
 # wget -c https://huggingface.co/Comfy-Org/flux1-dev/resolve/main/flux1-dev.safetensors -P ./models/diffusion_models/
