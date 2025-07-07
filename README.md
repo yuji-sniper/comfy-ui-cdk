@@ -1,3 +1,6 @@
+## 前提
+リージョンは`us-east-1`
+
 ## 事前準備
 - ComfyUIバックアップ用S3バケット作成  
 `comfyui-backup-{アカウントID}`
