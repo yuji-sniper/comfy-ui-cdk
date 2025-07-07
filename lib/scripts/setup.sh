@@ -17,7 +17,6 @@ git clone https://github.com/ltdrdata/ComfyUI-Manager custom_nodes/comfyui-manag
 # S3から復元
 aws s3 cp s3://$BUCKET_NAME/user/default/workflows ./user/default/workflows --recursive
 aws s3 cp s3://$BUCKET_NAME/custom_nodes ./custom_nodes --recursive
-aws s3 cp s3://$BUCKET_NAME/input ./input --recursive
 
 
 # requirements.txtをインストール
