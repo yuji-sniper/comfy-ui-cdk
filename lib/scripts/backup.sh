@@ -7,6 +7,7 @@ BUCKET_NAME=comfyui-backup-${AWS_ACCOUNT_ID}
 cd ~/ComfyUI
 
 
-# バックアップ
-aws s3 cp ./user/default/workflows s3://$BUCKET_NAME/user/default/workflows --recursive --storage-class INTELLIGENT_TIERING
-aws s3 cp ./custom_nodes s3://$BUCKET_NAME/custom_nodes --recursive --storage-class INTELLIGENT_TIERING
+# zip化してS3にバックアップ
+zip -r ./backup.zip ./user/default/workflows ./custom_nodes -x ./custom_nodes/comfyui-manager
+aws s3 cp ./backup.zip s3://$BUCKET_NAME/backup.zip
+rm ./backup.zip
