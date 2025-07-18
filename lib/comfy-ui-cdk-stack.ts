@@ -72,7 +72,7 @@ export class ComfyUiCdkStack extends cdk.Stack {
     const instance = new ec2.Instance(this, 'ComfyUiInstance', {
       instanceName: 'comfy-ui',
       vpc,
-      availabilityZone: 'us-east-2',
+      availabilityZone: 'us-east-1',
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.G4DN, ec2.InstanceSize.XLARGE), // 安価（GPUメモリ16GB）
       // instanceType: ec2.InstanceType.of(ec2.InstanceClass.G6, ec2.InstanceSize.XLARGE2), // Flux使うならこれ（GPUメモリ32GB）
       machineImage: ec2.MachineImage.genericLinux({
