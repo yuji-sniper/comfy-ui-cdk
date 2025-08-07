@@ -6,6 +6,12 @@
 `comfyui-backup-{アカウントID}`
 - CIVITAIのAPIキーのSSMパラメータ作成  
 `/comfy-ui/civitai-api-key`
+- EC2へのSSH接続用のキーペア作成
+`comfy-ui-{リージョン}`  
+```ssh
+$ mv ~/Downloads/comfy-ui.pem ~/.ssh/
+$ chmod 400 ~/.ssh/comfy-ui.pem
+```
 
 ## 初回
 ```bash

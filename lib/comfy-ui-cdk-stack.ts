@@ -5,9 +5,27 @@ import { readdirSync, readFileSync } from 'fs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 
+type RegionConfig = {
+  ec2: {
+    amiId: string;
+    availabilityZone: string;
+  };
+};
+
 export class ComfyUiCdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+
+    // リージョンごとの設定
+    const regionConfig: Record<string, RegionConfig> = {
+      'us-east-1': {
+        ec2: {
+          amiId: 'ami-05ee60afff9d0a480',
+          availabilityZone: 'us-east-1a',
+        }
+      },
+    };
 
 
     // デフォルトVPCを取得
@@ -31,7 +49,7 @@ export class ComfyUiCdkStack extends cdk.Stack {
     const comfyUiBackupBucket = s3.Bucket.fromBucketName(
       this,
       'ComfyUiBackupBucket',
-      `comfyui-backup-${this.account}`,
+      `comfyui-backup-${this.account}-${this.region}`,
     );
 
 
@@ -51,6 +69,11 @@ export class ComfyUiCdkStack extends cdk.Stack {
         `chown ubuntu:ubuntu /home/ubuntu/${scriptFile}`,
       );
     }
+
+    // キーペア
+    const keyPair = ec2.KeyPair.fromKeyPairName(this, 'ComfyUiKeyPair',
+      `comfy-ui-${this.region}`
+    );
 
     // civitiapikeyアクセスのためのロール
     const instanceRole = new iam.Role(this, 'InstanceRole', {
@@ -72,14 +95,14 @@ export class ComfyUiCdkStack extends cdk.Stack {
     const instance = new ec2.Instance(this, 'ComfyUiInstance', {
       instanceName: 'comfy-ui',
       vpc,
-      availabilityZone: 'us-east-1a',
+      availabilityZone: regionConfig[this.region].ec2.availabilityZone,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.G4DN, ec2.InstanceSize.XLARGE), // 安価（GPUメモリ16GB）
       // instanceType: ec2.InstanceType.of(ec2.InstanceClass.G6, ec2.InstanceSize.XLARGE2), // Flux使うならこれ（GPUメモリ32GB）
       machineImage: ec2.MachineImage.genericLinux({
         // Deep Learning OSS Nvidia Driver AMI GPU PyTorch 2.7 (Ubuntu 22.04)
-        'us-east-1': 'ami-05ee60afff9d0a480',
+        [this.region]: regionConfig[this.region].ec2.amiId,
       }),
-      keyPair: ec2.KeyPair.fromKeyPairName(this, 'ComfyUiKeyPair', 'comfy-ui'),
+      keyPair: keyPair,
       securityGroup: securityGroup,
       role: instanceRole,
       vpcSubnets: {

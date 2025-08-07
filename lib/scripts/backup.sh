@@ -1,8 +1,8 @@
 #!/bin/bash
 
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-BUCKET_NAME=comfyui-backup-${AWS_ACCOUNT_ID}
-
+AWS_REGION=$(curl -s http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r .region)
+BUCKET_NAME=comfyui-backup-${AWS_ACCOUNT_ID}-${AWS_REGION}
 
 cd ~/ComfyUI
 
